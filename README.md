@@ -12,7 +12,10 @@ sets, full problem statements, MCQ answer keys, official solutions and interview
 experiences. Everything it fetches is also saved as plain markdown on your disk, so you
 can prep offline, in Obsidian, or with an agent that never touches the network again.
 
-It is one Python file with a single dependency (the official `mcp` SDK). HTTP is the
+It also ships 9 [skills](#skills) for mock OAs, MCQ drills, hint-based coaching, interview
+briefs, study plans and spaced revision.
+
+The server is one Python file with a single dependency (the official `mcp` SDK). HTTP is the
 standard library.
 
 > **Read this first.** OAHelper's Terms of Service forbid automated access and scraping,
@@ -108,10 +111,8 @@ claude mcp add oahelper -s user -- /path/to/oahelper-mcp/.venv/bin/python /path/
 `-s user` makes it available in every project; use `-s local` for the current project
 only. Run `claude mcp list` to confirm it shows as connected, or `/mcp` inside a session.
 
-**Optional skill.** Copy `skills/oa-prep/` to `~/.claude/skills/oa-prep/` and Claude Code
-will turn "prep me for Amazon's OA" into a full study guide: it syncs the company, reads
-the saved pack, adds public sources and writes a dated guide with every past question
-mapped to the nearest LeetCode problem.
+**Skills.** The repo ships 9 skills that turn the tools into study workflows. See
+[Skills](#skills) below for what each one does and how to install them.
 
 ### Claude Desktop
 
@@ -184,6 +185,46 @@ Ask in plain language. Some prompts that work well:
 A typical prep loop: `oahelper_sync` a company (call again while it says `NOT DONE`),
 then let the agent read `library/<company>/index.md` and the files it links. Reading the
 library costs no requests.
+
+## Skills
+
+The `skills/` folder holds ready-made [Agent Skills](https://docs.claude.com/en/docs/claude-code/skills):
+plain `SKILL.md` files that tell the agent how to chain the tools into a workflow. You
+just ask in plain language and the matching skill kicks in.
+
+| Skill | Ask something like | What it does |
+|---|---|---|
+| `oa-prep` | "prep me for Juspay's OA" | Full prep guide: syncs the company, reads every saved set, adds public sources, maps each past question to the nearest LeetCode problem |
+| `oa-mock` | "give me a mock OA for Amazon" | Timed mock built from real past questions in the real format, then graded with edge-case traces |
+| `mcq-drill` | "quiz me on DBMS MCQs from Infosys" | One MCQ at a time from real answer keys, with scoring and explanations |
+| `solve-coach` | "I'm stuck on this question, give me a hint" | Hint ladder (observation, pattern, approach, pseudocode, code) and code review, official solution only on request |
+| `interview-insights` | "what are Atlassian's interview rounds?" | Round-by-round brief from interview write-ups: repeated questions, what sank people, prep checklist |
+| `oa-compare` | "compare the OAs of Uber, Juspay and Atlassian" | Side-by-side OA patterns and the shared topics worth studying first |
+| `study-plan` | "my OA is on Nov 3, make me a plan" | Day-by-day plan to the deadline, weighted by the company's topics and your past mistakes |
+| `revise-mistakes` | "revise my mistakes" | Spaced-repetition re-test of questions you got wrong or needed hints on |
+| `oahelper-setup` | "oahelper isn't connecting" | Step-by-step diagnosis of install, client config and session problems |
+
+`oa-mock`, `mcq-drill` and `solve-coach` log every attempt to `library/_progress.md`, which
+`study-plan` and `revise-mistakes` read. It stays on your machine with the rest of
+`library/`.
+
+### Install the skills
+
+Claude Code, all projects:
+
+```bash
+cp -r skills/* ~/.claude/skills/
+```
+
+On Windows PowerShell: `Copy-Item -Recurse skills\* $HOME\.claude\skills\`
+
+For one project only, copy them into that project's `.claude/skills/` instead. Restart
+the session and they show up as `/oa-prep`, `/oa-mock` and so on, or trigger on their own
+from what you ask.
+
+Other agents: the files are plain markdown, so any agent that supports Agent Skills can
+load them from its skills folder. For one that does not, paste the relevant `SKILL.md`
+into its rules or custom instructions.
 
 ## Configuration
 
