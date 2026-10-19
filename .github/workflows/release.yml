@@ -35,8 +35,9 @@ jobs:
         run: |
           # keep stdin open a few seconds so the server can answer before it sees EOF
           {
-            printf '%s
-'               '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}'               '{"jsonrpc":"2.0","method":"notifications/initialized"}'               '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+            echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}'
+            echo '{"jsonrpc":"2.0","method":"notifications/initialized"}'
+            echo '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
             sleep 5
           } | OAHELPER_HOME="$RUNNER_TEMP/oah" timeout 60 uvx --from dist/*.whl oahelper-mcp > "$RUNNER_TEMP/out.jsonl" || true
           cat "$RUNNER_TEMP/out.jsonl"
