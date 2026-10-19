@@ -12,16 +12,22 @@ The session cookie is a password. Never ask the user to paste it into chat, neve
 
 ## 1. Find the install
 
-Locate the folder that holds `server.py` (ask if it is not obvious). Everything below is
-relative to it.
+Work out which way it was installed:
+- **Claude Code plugin** (`oahelper@oahelper-mcp` in `claude plugin list`): the cookie is
+  set with `/plugin configure oahelper@oahelper-mcp`.
+- **uvx** (`uvx ... oahelper-mcp` in the client config): data folder `~/.oahelper` unless
+  `OAHELPER_HOME` is set.
+- **Clone** (`python .../server.py`): data folder is the clone itself.
+
+`oahelper_status()` prints the data folder when the server is reachable.
 
 ## 2. Diagnose in this order, stop at the first failure
 
 | Check | How | If it fails |
 |---|---|---|
-| Python 3.10+ | `python --version` | Install a newer Python |
-| `mcp` installed in the Python the client launches | `<that python> -c "import mcp"` | `pip install -r requirements.txt` into that interpreter, or point the client at the venv's Python |
-| Server starts | `<python> server.py` should sit silently waiting on stdin (Ctrl+C to stop) | Read the traceback, fix it |
+| Runtime | uvx installs: `uvx --version`. Clones: `python --version` is 3.10+ | Install uv, or a newer Python |
+| Dependencies (clones only) | `<client's python> -c "import mcp"` | `pip install -r requirements.txt` into that interpreter. `mcp` must be below 2.0 |
+| Server starts | Run the exact command from the client config by hand: it should sit silently waiting on stdin (Ctrl+C to stop) | Read the traceback, fix it |
 | Client registered | Claude Code: `claude mcp list`. Others: open the config file from the README | Add it with absolute paths, restart the client |
 | Session present | `oahelper_status()` says `cookie set: yes` | Walk the user through the cookie steps below |
 | Session valid | `oahelper_status(online=true)` says `session valid` | Cookie expired: redo the cookie steps |
@@ -30,7 +36,8 @@ relative to it.
 
 ## 3. Cookie steps (the user does these, not you)
 
-1. Copy `.env.example` to `.env` if it does not exist.
+1. Create `.env` in the data folder if it does not exist. Plugin users skip this and,
+   after step 3, paste the cookie into `/plugin configure oahelper@oahelper-mcp` instead.
 2. Log in at https://www.oahelper.in, open DevTools (F12), Network tab, reload.
 3. Click any request whose URL contains `/api/proxy/`, copy the full `cookie` request
    header into `OAHELPER_COOKIE=` in `.env`. Copy `authorization` into
@@ -45,7 +52,8 @@ relative to it.
   their account.
 - Premium content missing: account is not Pro, or the cache holds a logged-out copy.
   Retry the call with `refresh=true`.
-- Client shows "failed" or "connection closed": almost always a relative path or the
-  wrong Python. Use absolute paths to both.
+- Client shows "failed" or "connection closed": `uvx` not on the PATH the client sees,
+  or (clones) a relative path or the wrong Python. Use absolute paths.
+- `No module named 'mcp.server.fastmcp'`: `mcp` 2.x is installed. Install `mcp<2`.
 
 Finish by reporting each check as pass or fail in one short list.

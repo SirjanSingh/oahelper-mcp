@@ -5,6 +5,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/SirjanSingh/oahelper-mcp?style=social)](https://github.com/SirjanSingh/oahelper-mcp/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-server-black)](https://modelcontextprotocol.io)
+[![skills.sh](https://skills.sh/b/SirjanSingh/oahelper-mcp)](https://skills.sh/SirjanSingh/oahelper-mcp)
 
 An MCP server that lets Claude Code, Claude Desktop, Cursor, Codex or any other MCP client
 read your **own** [OAHelper](https://www.oahelper.in) Pro account: company OA question
@@ -15,8 +16,21 @@ can prep offline, in Obsidian, or with an agent that never touches the network a
 It also ships 9 [skills](#skills) for mock OAs, MCQ drills, hint-based coaching, interview
 briefs, study plans and spaced revision.
 
-The server is one Python file with a single dependency (the official `mcp` SDK). HTTP is the
-standard library.
+The server is one small Python package with a single dependency (the official `mcp` SDK).
+HTTP is the standard library.
+
+<!-- mcp-name: io.github.SirjanSingh/oahelper-mcp -->
+
+## Quick install
+
+| You use | One command |
+|---|---|
+| Claude Code (server + all 9 skills) | `/plugin marketplace add SirjanSingh/oahelper-mcp` then `/plugin install oahelper@oahelper-mcp` |
+| Just the skills, any agent | `npx skills add SirjanSingh/oahelper-mcp` |
+| Just the server, any MCP client | `uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp` (see [Connect it to your agent](#connect-it-to-your-agent)) |
+
+The Claude Code plugin asks for your OAHelper cookie when you enable it and keeps it in
+secure storage. Its skills show up as `/oahelper:oa-mock`, `/oahelper:mcq-drill` and so on.
 
 > **Read this first.** OAHelper's Terms of Service forbid automated access and scraping,
 > and the penalty can be losing your Pro account. This tool is built to be used the way
@@ -50,69 +64,57 @@ library/<company>/
   images/             only when you ask for them
 ```
 
-`library/`, `cache/` and `.env` are gitignored. Keep it that way.
+All of it lives in your data folder: `~/.oahelper` by default, the repo folder when you
+run from a clone, or wherever `OAHELPER_HOME` points. Inside a clone, `library/`, `cache/`
+and `.env` are gitignored. Keep it that way.
 
 ## Requirements
 
-- Python 3.10 or newer
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) (recommended), or Python 3.10+ with pip
 - An OAHelper account (most content needs Pro)
 - Any MCP client that can launch a local stdio server
 
-## Install
+## Add your session
 
-```bash
-git clone https://github.com/SirjanSingh/oahelper-mcp.git
-cd oahelper-mcp
-python -m venv .venv
-```
-
-Activate it (`source .venv/bin/activate` on macOS/Linux, `.venv\Scripts\activate` on
-Windows), then:
-
-```bash
-pip install -r requirements.txt
-```
-
-### Add your session
-
-1. Copy `.env.example` to `.env` in the same folder.
-2. Open <https://www.oahelper.in> in your browser while logged in.
-3. Press F12, open the **Network** tab, reload, and click any request whose URL contains
+1. Open <https://www.oahelper.in> in your browser while logged in.
+2. Press F12, open the **Network** tab, reload, and click any request whose URL contains
    `/api/proxy/`.
-4. Under **Request Headers**, copy the whole `cookie` value into `OAHELPER_COOKIE`. If
-   there is an `authorization` header, copy it into `OAHELPER_BEARER`. Copying your
-   `user-agent` into `OAHELPER_USER_AGENT` is optional.
+3. Under **Request Headers**, copy the whole `cookie` value.
+4. Put it in `~/.oahelper/.env` (create the folder and file) as one line:
+
+   ```
+   OAHELPER_COOKIE=<paste here>
+   ```
+
+   `.env.example` lists the other optional settings. You can instead set
+   `OAHELPER_COOKIE` as an environment variable in your client's config, and the Claude
+   Code plugin asks for it when you enable it.
 
 The session lasts until you log out on the site. When tools start returning
 `session rejected`, repeat these steps. Treat the cookie like a password: do not paste it
 into a chat with any AI, and do not commit it.
 
-Check it works:
-
-```bash
-python -c "import server; print(server.oahelper_status(online=True))"
-```
-
-You should see `session valid | Pro: yes`.
+Then ask your agent to run `oahelper_status` with `online=true`. You should see
+`session valid | Pro: yes`.
 
 ## Connect it to your agent
 
-Every client below needs the same two things: the Python that has `mcp` installed, and
-the absolute path to `server.py`. In the examples, replace `/path/to/oahelper-mcp` with
-your clone, and use `.venv/bin/python` (macOS/Linux) or `.venv\\Scripts\\python.exe`
-(Windows, escaped backslashes in JSON).
+With [uv](https://docs.astral.sh/uv/) installed, every client runs the same command and
+uv fetches everything else:
+
+```
+uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp
+```
 
 ### Claude Code
 
 ```bash
-claude mcp add oahelper -s user -- /path/to/oahelper-mcp/.venv/bin/python /path/to/oahelper-mcp/server.py
+claude mcp add oahelper -s user -- uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp
 ```
 
 `-s user` makes it available in every project; use `-s local` for the current project
 only. Run `claude mcp list` to confirm it shows as connected, or `/mcp` inside a session.
-
-**Skills.** The repo ships 9 skills that turn the tools into study workflows. See
-[Skills](#skills) below for what each one does and how to install them.
+Or skip this and install the [plugin](#quick-install), which also brings the skills.
 
 ### Claude Desktop
 
@@ -122,8 +124,8 @@ Edit `claude_desktop_config.json` (Settings, Developer, Edit Config):
 {
   "mcpServers": {
     "oahelper": {
-      "command": "/path/to/oahelper-mcp/.venv/bin/python",
-      "args": ["/path/to/oahelper-mcp/server.py"]
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/SirjanSingh/oahelper-mcp", "oahelper-mcp"]
     }
   }
 }
@@ -145,8 +147,8 @@ Same JSON as Claude Desktop, in `~/.cursor/mcp.json` (all projects) or
   "servers": {
     "oahelper": {
       "type": "stdio",
-      "command": "/path/to/oahelper-mcp/.venv/bin/python",
-      "args": ["/path/to/oahelper-mcp/server.py"]
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/SirjanSingh/oahelper-mcp", "oahelper-mcp"]
     }
   }
 }
@@ -155,21 +157,34 @@ Same JSON as Claude Desktop, in `~/.cursor/mcp.json` (all projects) or
 ### OpenAI Codex CLI
 
 ```bash
-codex mcp add oahelper -- /path/to/oahelper-mcp/.venv/bin/python /path/to/oahelper-mcp/server.py
+codex mcp add oahelper -- uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp
 ```
 
 or in `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.oahelper]
-command = "/path/to/oahelper-mcp/.venv/bin/python"
-args = ["/path/to/oahelper-mcp/server.py"]
+command = "uvx"
+args = ["--from", "git+https://github.com/SirjanSingh/oahelper-mcp", "oahelper-mcp"]
 ```
 
 ### Gemini CLI, Windsurf, Cline and others
 
 Any client that reads an `mcpServers` JSON block takes the Claude Desktop snippet
 unchanged. Check your client's docs for where its config file lives.
+
+### Without uv (from a clone)
+
+```bash
+git clone https://github.com/SirjanSingh/oahelper-mcp.git
+cd oahelper-mcp
+python -m venv .venv
+.venv/bin/pip install -r requirements.txt     # Windows: .venv\Scripts\pip
+```
+
+Then use `/path/to/oahelper-mcp/.venv/bin/python /path/to/oahelper-mcp/server.py` as the
+command in any config above. In this mode `.env`, `library/` and `cache/` live in the
+clone itself.
 
 ## Using it
 
@@ -210,7 +225,16 @@ just ask in plain language and the matching skill kicks in.
 
 ### Install the skills
 
-Claude Code, all projects:
+Easiest, for Claude Code, Codex, Cursor and other agents that support skills:
+
+```bash
+npx skills add SirjanSingh/oahelper-mcp
+```
+
+Add `--list` to see them first, or `--skill oa-mock` to pick one. In Claude Code, the
+[plugin](#quick-install) installs them together with the server.
+
+By hand, for Claude Code in all projects:
 
 ```bash
 cp -r skills/* ~/.claude/skills/
@@ -228,24 +252,26 @@ into its rules or custom instructions.
 
 ## Configuration
 
-All in `.env`:
+In `.env` inside the data folder, or as environment variables of the same name
+(environment wins):
 
 | Key | Default | Meaning |
 |---|---|---|
+| `OAHELPER_HOME` | `~/.oahelper` (or the clone) | Data folder for `.env`, `cache/` and `library/`. Environment only |
 | `OAHELPER_COOKIE` | | Browser `cookie` header from a logged-in session |
 | `OAHELPER_BEARER` | | `authorization` header, if the site sends one |
 | `OAHELPER_USER_AGENT` | generic | Your browser's user agent, so requests match your session |
 | `OAHELPER_DAILY_CAP` | `300` | Live requests per day before the server refuses |
 
-The 2 second gap between requests is `MIN_GAP` in `server.py`.
+The 2 second gap between requests is `MIN_GAP` in `oahelper_mcp/server.py`.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---|---|
-| `session rejected` / HTTP 401 or 403 | Cookie expired. Copy a fresh one into `.env` |
+| `session rejected` / HTTP 401 or 403 | Cookie expired. Copy a fresh one into `.env` (or `/plugin configure oahelper@oahelper-mcp`) |
 | `Daily cap reached` | Wait until tomorrow. Cached and offline tools still work |
-| Client shows the server as failed | Use absolute paths, and the Python that has `mcp` installed. Run `python server.py` by hand: it should sit silently waiting on stdin |
+| Client shows the server as failed | Check `uv` is on the PATH the client sees (`uvx --version`). From a clone, use absolute paths and the venv's Python. Run the command by hand: it should sit silently waiting on stdin |
 | `ModuleNotFoundError: mcp` | The client is launching a different Python. Point `command` at the venv's interpreter |
 | Premium content missing | Your account is not Pro, or the cached copy was fetched logged out. Pass `refresh=true` |
 
@@ -256,6 +282,19 @@ browsing on a personal account and summarising it with `tools/har_endpoints.py`,
 prints paths, parameter names and response shapes but never header values or response
 content. If the site changes and something breaks, record a new HAR, run that script on
 it, and compare.
+
+## Releasing (maintainer)
+
+Bump the version in `oahelper_mcp/__init__.py`, `.claude-plugin/plugin.json` and both
+`version` fields in `server.json`, commit, then push a tag:
+
+```bash
+git tag v0.2.0 && git push origin v0.2.0
+```
+
+`.github/workflows/release.yml` checks the versions match, smoke-tests the wheel,
+publishes to PyPI (trusted publishing, no token) and then to the
+[MCP Registry](https://registry.modelcontextprotocol.io) (GitHub OIDC, no token).
 
 ## Author
 

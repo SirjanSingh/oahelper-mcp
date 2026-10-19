@@ -1,0 +1,54 @@
+# Release: push a tag like v0.2.0 and this publishes to PyPI, then to the MCP Registry.
+# No stored secrets: PyPI uses trusted publishing, the registry uses GitHub OIDC.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Check tag matches package, plugin and server.json versions
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          PKG=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' oahelper_mcp/__init__.py)
+          PLUGIN=$(jq -r .version .claude-plugin/plugin.json)
+          SERVER=$(jq -r .version server.json)
+          SERVER_PKG=$(jq -r '.packages[0].version' server.json)
+          echo "tag=$TAG package=$PKG plugin=$PLUGIN server=$SERVER server_pkg=$SERVER_PKG"
+          for v in "$PKG" "$PLUGIN" "$SERVER" "$SERVER_PKG"; do [ "$v" = "$TAG" ] || { echo "version mismatch"; exit 1; }; done
+
+      - name: Build
+        run: uv build
+
+      - name: Smoke test the wheel
+        run: |
+          printf '%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' \
+            '{"jsonrpc":"2.0","method":"notifications/initialized"}' \
+            '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+            | OAHELPER_HOME="$RUNNER_TEMP/oah" timeout 60 uvx --from dist/*.whl oahelper-mcp | grep -q oahelper_sync
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      - name: Publish to MCP Registry
+        run: |
+          ./mcp-publisher login github-oidc
+          # PyPI can take a minute to serve a new release; retry while the registry verifies it
+          for i in 1 2 3 4 5; do ./mcp-publisher publish && exit 0; sleep 30; done
+          exit 1

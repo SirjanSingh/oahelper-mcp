@@ -1,0 +1,15 @@
+{
+  "name": "oahelper-mcp",
+  "description": "OAHelper MCP server and OA prep skills by Sirjan Singh",
+  "owner": {
+    "name": "Sirjan Singh",
+    "url": "https://github.com/SirjanSingh"
+  },
+  "plugins": [
+    {
+      "name": "oahelper",
+      "source": "./",
+      "description": "OAHelper Pro in Claude Code: OA sets, MCQ answers, solutions, interview experiences, offline library, and 9 prep skills"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "name": "oahelper",
+  "displayName": "OAHelper MCP",
+  "version": "0.2.0",
+  "description": "Your own OAHelper Pro account in Claude Code: OA question sets, MCQ answer keys, official solutions and interview experiences, saved offline, plus 9 skills for mock OAs, MCQ drills, hint coaching, study plans and revision.",
+  "author": {
+    "name": "Sirjan Singh",
+    "url": "https://github.com/SirjanSingh"
+  },
+  "homepage": "https://github.com/SirjanSingh/oahelper-mcp",
+  "repository": "https://github.com/SirjanSingh/oahelper-mcp",
+  "license": "MIT",
+  "keywords": ["oahelper", "online-assessment", "placement", "interview-preparation", "mcp", "dsa"],
+  "mcpServers": {
+    "oahelper": {
+      "command": "uvx",
+      "args": ["--from", "${CLAUDE_PLUGIN_ROOT}", "oahelper-mcp"],
+      "env": {
+        "OAHELPER_COOKIE": "${user_config.oahelper_cookie}",
+        "OAHELPER_HOME": "${user_config.data_dir}"
+      }
+    }
+  },
+  "userConfig": {
+    "oahelper_cookie": {
+      "type": "string",
+      "title": "OAHelper session cookie",
+      "description": "The full `cookie` request header from a logged-in oahelper.in tab (DevTools, Network, any /api/proxy/ request). Stored in secure storage. Leave empty to use ~/.oahelper/.env instead.",
+      "sensitive": true
+    },
+    "data_dir": {
+      "type": "directory",
+      "title": "Data folder",
+      "description": "Where the offline library, cache and optional .env live. Leave empty for ~/.oahelper."
+    }
+  }
+}

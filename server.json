@@ -1,0 +1,39 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.SirjanSingh/oahelper-mcp",
+  "title": "OAHelper",
+  "description": "Your OAHelper Pro account: OA sets, MCQ answers, solutions and interview experiences, offline",
+  "repository": {
+    "url": "https://github.com/SirjanSingh/oahelper-mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://github.com/SirjanSingh/oahelper-mcp",
+  "version": "0.2.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "oahelper-mcp",
+      "version": "0.2.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "OAHELPER_COOKIE",
+          "description": "Full cookie request header from a logged-in oahelper.in browser tab",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "OAHELPER_HOME",
+          "description": "Folder for the offline library and cache (default ~/.oahelper)",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}

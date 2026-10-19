@@ -4,3 +4,6 @@ library/
 *.har
 __pycache__/
 .venv/
+dist/
+build/
+*.egg-info/

@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "oahelper-mcp"
+dynamic = ["version"]
+description = "MCP server for your own OAHelper Pro account: OA question sets, MCQ answers, solutions and interview experiences, saved offline as markdown."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Sirjan Singh", email = "sirjan.singh036@gmail.com" }]
+requires-python = ">=3.10"
+dependencies = ["mcp>=1.2,<2"]
+keywords = ["mcp", "mcp-server", "oahelper", "online-assessment", "placement", "interview-preparation", "claude", "claude-code"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Education",
+    "Topic :: Education",
+]
+
+[project.urls]
+Homepage = "https://github.com/SirjanSingh/oahelper-mcp"
+Repository = "https://github.com/SirjanSingh/oahelper-mcp"
+Issues = "https://github.com/SirjanSingh/oahelper-mcp/issues"
+Author = "https://github.com/SirjanSingh"
+
+[project.scripts]
+oahelper-mcp = "oahelper_mcp.server:main"
+
+[tool.hatch.version]
+path = "oahelper_mcp/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["oahelper_mcp"]
+
+[tool.hatch.build.targets.sdist]
+include = ["oahelper_mcp", "README.md", "LICENSE", ".env.example"]
