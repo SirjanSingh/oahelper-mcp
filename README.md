@@ -1,5 +1,11 @@
 # oahelper-mcp
 
+**Built by [Sirjan Singh](https://github.com/SirjanSingh)**
+
+[![GitHub stars](https://img.shields.io/github/stars/SirjanSingh/oahelper-mcp?style=social)](https://github.com/SirjanSingh/oahelper-mcp/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![MCP](https://img.shields.io/badge/MCP-server-black)](https://modelcontextprotocol.io)
+
 An MCP server that lets Claude Code, Claude Desktop, Cursor, Codex or any other MCP client
 read your **own** [OAHelper](https://www.oahelper.in) Pro account: company OA question
 sets, full problem statements, MCQ answer keys, official solutions and interview
@@ -210,9 +216,20 @@ prints paths, parameter names and response shapes but never header values or res
 content. If the site changes and something breaks, record a new HAR, run that script on
 it, and compare.
 
+## Author
+
+I am **Sirjan Singh**. I built this to prep for my own placement OAs.
+
+- GitHub: [@SirjanSingh](https://github.com/SirjanSingh)
+- LinkedIn: [Sirjan Singh](https://www.linkedin.com/in/sirjan-singh-573534286)
+
+If this saved you prep time, **star the repo**. It is the only way I find out it helped
+someone, and it helps other people preparing for OAs find it. Issues and pull requests
+are welcome.
+
 ## License
 
-MIT for the code in this repository. It grants nothing over OAHelper's content, which
+MIT, copyright (c) 2026 Sirjan Singh, for the code in this repository. It grants nothing over OAHelper's content, which
 belongs to OAHelper and its contributors.
 
 This project is not affiliated with or endorsed by OAHelper.

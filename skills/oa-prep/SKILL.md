@@ -5,6 +5,8 @@ description: Build or update an online-assessment (OA) and interview prep guide 
 
 # OA prep from OAHelper
 
+Part of [oahelper-mcp](https://github.com/SirjanSingh/oahelper-mcp) by Sirjan Singh.
+
 OAHelper content comes from the `oahelper` MCP server. Its library at
 `<server folder>/library/<company>/` is the offline source of truth: read the files there
 rather than re-fetching.

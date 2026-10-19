@@ -1,4 +1,6 @@
-"""Summarise the /api/proxy calls in a browser HAR without leaking anything sensitive.
+"""Part of oahelper-mcp by Sirjan Singh (https://github.com/SirjanSingh/oahelper-mcp).
+
+Summarise the /api/proxy calls in a browser HAR without leaking anything sensitive.
 
 Prints, per distinct method + path + action: query parameter names (values only for
 safe keys), request body key names, response status, and the response JSON shape

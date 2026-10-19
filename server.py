@@ -1,5 +1,7 @@
 """OAHelper MCP server: your OAHelper Pro account in Claude Code, saved offline.
 
+Author: Sirjan Singh (https://github.com/SirjanSingh/oahelper-mcp). MIT license.
+
 Personal use only, on your own logged-in session. OAHelper's Terms of Service forbid
 automated access, so this fetches only what you ask for, one company at a time, waits
 2s between requests, stops at a daily cap, and caches everything so nothing is fetched
