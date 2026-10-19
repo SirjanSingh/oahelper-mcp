@@ -5,6 +5,8 @@
 [![GitHub stars](https://img.shields.io/github/stars/SirjanSingh/oahelper-mcp?style=social)](https://github.com/SirjanSingh/oahelper-mcp/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-server-black)](https://modelcontextprotocol.io)
+[![PyPI](https://img.shields.io/pypi/v/oahelper-mcp)](https://pypi.org/project/oahelper-mcp/)
+[![MCP Registry](https://img.shields.io/badge/MCP%20Registry-listed-black)](https://registry.modelcontextprotocol.io/v0/servers?search=oahelper-mcp)
 [![skills.sh](https://skills.sh/b/SirjanSingh/oahelper-mcp)](https://skills.sh/SirjanSingh/oahelper-mcp)
 
 An MCP server that lets Claude Code, Claude Desktop, Cursor, Codex or any other MCP client
@@ -27,7 +29,7 @@ HTTP is the standard library.
 |---|---|
 | Claude Code (server + all 9 skills) | `/plugin marketplace add SirjanSingh/oahelper-mcp` then `/plugin install oahelper@oahelper-mcp` |
 | Just the skills, any agent | `npx skills add SirjanSingh/oahelper-mcp` |
-| Just the server, any MCP client | `uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp` (see [Connect it to your agent](#connect-it-to-your-agent)) |
+| Just the server, any MCP client | `uvx oahelper-mcp` (see [Connect it to your agent](#connect-it-to-your-agent)) |
 
 The Claude Code plugin asks for your OAHelper cookie when you enable it and keeps it in
 secure storage. Its skills show up as `/oahelper:oa-mock`, `/oahelper:mcq-drill` and so on.
@@ -103,13 +105,13 @@ With [uv](https://docs.astral.sh/uv/) installed, every client runs the same comm
 uv fetches everything else:
 
 ```
-uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp
+uvx oahelper-mcp
 ```
 
 ### Claude Code
 
 ```bash
-claude mcp add oahelper -s user -- uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp
+claude mcp add oahelper -s user -- uvx oahelper-mcp
 ```
 
 `-s user` makes it available in every project; use `-s local` for the current project
@@ -125,7 +127,7 @@ Edit `claude_desktop_config.json` (Settings, Developer, Edit Config):
   "mcpServers": {
     "oahelper": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/SirjanSingh/oahelper-mcp", "oahelper-mcp"]
+      "args": ["oahelper-mcp"]
     }
   }
 }
@@ -148,7 +150,7 @@ Same JSON as Claude Desktop, in `~/.cursor/mcp.json` (all projects) or
     "oahelper": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/SirjanSingh/oahelper-mcp", "oahelper-mcp"]
+      "args": ["oahelper-mcp"]
     }
   }
 }
@@ -157,7 +159,7 @@ Same JSON as Claude Desktop, in `~/.cursor/mcp.json` (all projects) or
 ### OpenAI Codex CLI
 
 ```bash
-codex mcp add oahelper -- uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp
+codex mcp add oahelper -- uvx oahelper-mcp
 ```
 
 or in `~/.codex/config.toml`:
@@ -165,13 +167,16 @@ or in `~/.codex/config.toml`:
 ```toml
 [mcp_servers.oahelper]
 command = "uvx"
-args = ["--from", "git+https://github.com/SirjanSingh/oahelper-mcp", "oahelper-mcp"]
+args = ["oahelper-mcp"]
 ```
 
 ### Gemini CLI, Windsurf, Cline and others
 
 Any client that reads an `mcpServers` JSON block takes the Claude Desktop snippet
 unchanged. Check your client's docs for where its config file lives.
+
+Prefer pip? `pip install oahelper-mcp` gives you an `oahelper-mcp` command to use instead.
+For the latest unreleased code, use `uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp`.
 
 ### Without uv (from a clone)
 
