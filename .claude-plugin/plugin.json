@@ -1,7 +1,7 @@
 {
   "name": "oahelper",
   "displayName": "OAHelper MCP",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Your own OAHelper Pro account in Claude Code: OA question sets, MCQ answer keys, official solutions and interview experiences, saved offline, plus 9 skills for mock OAs, MCQ drills, hint coaching, study plans and revision.",
   "author": {
     "name": "Sirjan Singh",

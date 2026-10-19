@@ -3,7 +3,7 @@
 **Built by [Sirjan Singh](https://github.com/SirjanSingh)**
 
 [![GitHub stars](https://img.shields.io/github/stars/SirjanSingh/oahelper-mcp?style=social)](https://github.com/SirjanSingh/oahelper-mcp/stargazers)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/SirjanSingh/oahelper-mcp/blob/main/LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-server-black)](https://modelcontextprotocol.io)
 [![PyPI](https://img.shields.io/pypi/v/oahelper-mcp)](https://pypi.org/project/oahelper-mcp/)
 [![MCP Registry](https://img.shields.io/badge/MCP%20Registry-listed-black)](https://registry.modelcontextprotocol.io/v0/servers?search=oahelper-mcp)
@@ -175,8 +175,10 @@ args = ["oahelper-mcp"]
 Any client that reads an `mcpServers` JSON block takes the Claude Desktop snippet
 unchanged. Check your client's docs for where its config file lives.
 
-Prefer pip? `pip install oahelper-mcp` gives you an `oahelper-mcp` command to use instead.
-For the latest unreleased code, use `uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp`.
+### Other ways to run it
+
+- **pip:** `pip install oahelper-mcp`, then use `oahelper-mcp` as the command.
+- **Latest unreleased code:** `uvx --from git+https://github.com/SirjanSingh/oahelper-mcp oahelper-mcp`.
 
 ### Without uv (from a clone)
 
@@ -208,7 +210,7 @@ library costs no requests.
 
 ## Skills
 
-The `skills/` folder holds ready-made [Agent Skills](https://docs.claude.com/en/docs/claude-code/skills):
+The `skills/` folder holds ready-made [Agent Skills](https://code.claude.com/docs/en/skills):
 plain `SKILL.md` files that tell the agent how to chain the tools into a workflow. You
 just ask in plain language and the matching skill kicks in.
 
@@ -278,6 +280,7 @@ The 2 second gap between requests is `MIN_GAP` in `oahelper_mcp/server.py`.
 | `Daily cap reached` | Wait until tomorrow. Cached and offline tools still work |
 | Client shows the server as failed | Check `uv` is on the PATH the client sees (`uvx --version`). From a clone, use absolute paths and the venv's Python. Run the command by hand: it should sit silently waiting on stdin |
 | `ModuleNotFoundError: mcp` | The client is launching a different Python. Point `command` at the venv's interpreter |
+| `No module named 'mcp.server.fastmcp'` | A clone has `mcp` 2.x installed. Run `pip install "mcp<2"` (the PyPI package already pins it) |
 | Premium content missing | Your account is not Pro, or the cached copy was fetched logged out. Pass `refresh=true` |
 
 ## How it was built
@@ -294,7 +297,7 @@ Bump the version in `oahelper_mcp/__init__.py`, `.claude-plugin/plugin.json` and
 `version` fields in `server.json`, commit, then push a tag:
 
 ```bash
-git tag v0.2.2 && git push origin v0.2.2
+git tag vX.Y.Z && git push origin vX.Y.Z
 ```
 
 `.github/workflows/release.yml` checks the versions match, smoke-tests the wheel,
@@ -314,7 +317,7 @@ are welcome.
 
 ## License
 
-MIT, copyright (c) 2026 Sirjan Singh, for the code in this repository. It grants nothing over OAHelper's content, which
-belongs to OAHelper and its contributors.
+MIT, copyright (c) 2026 Sirjan Singh, for the code in this repository. It grants nothing
+over OAHelper's content, which belongs to OAHelper and its contributors.
 
 This project is not affiliated with or endorsed by OAHelper.
