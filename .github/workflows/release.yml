@@ -33,11 +33,16 @@ jobs:
 
       - name: Smoke test the wheel
         run: |
-          printf '%s\n' \
-            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' \
-            '{"jsonrpc":"2.0","method":"notifications/initialized"}' \
-            '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
-            | OAHELPER_HOME="$RUNNER_TEMP/oah" timeout 60 uvx --from dist/*.whl oahelper-mcp | grep -q oahelper_sync
+          # keep stdin open a few seconds so the server can answer before it sees EOF
+          {
+            printf '%s
+'               '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}'               '{"jsonrpc":"2.0","method":"notifications/initialized"}'               '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+            sleep 5
+          } | OAHELPER_HOME="$RUNNER_TEMP/oah" timeout 60 uvx --from dist/*.whl oahelper-mcp > "$RUNNER_TEMP/out.jsonl" || true
+          cat "$RUNNER_TEMP/out.jsonl"
+          for t in oahelper_search oahelper_sync oahelper_offline oahelper_status; do
+            grep -q "\"$t\"" "$RUNNER_TEMP/out.jsonl" || { echo "missing tool $t"; exit 1; }
+          done
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

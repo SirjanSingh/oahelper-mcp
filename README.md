@@ -289,7 +289,7 @@ Bump the version in `oahelper_mcp/__init__.py`, `.claude-plugin/plugin.json` and
 `version` fields in `server.json`, commit, then push a tag:
 
 ```bash
-git tag v0.2.0 && git push origin v0.2.0
+git tag v0.2.1 && git push origin v0.2.1
 ```
 
 `.github/workflows/release.yml` checks the versions match, smoke-tests the wheel,
