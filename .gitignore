@@ -1,0 +1,6 @@
+.env
+cache/
+library/
+*.har
+__pycache__/
+.venv/
