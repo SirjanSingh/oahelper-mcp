@@ -321,3 +321,5 @@ MIT, copyright (c) 2026 Sirjan Singh, for the code in this repository. It grants
 over OAHelper's content, which belongs to OAHelper and its contributors.
 
 This project is not affiliated with or endorsed by OAHelper.
+
+[![M8ven Score](https://m8ven.ai/badge/mcp/sirjansingh-oahelper-mcp-sfhpxi?v=2800230a7b7fb9fc770cf608a4a6b1d5)](https://m8ven.ai/mcp/sirjansingh-oahelper-mcp-sfhpxi?s=readme)
